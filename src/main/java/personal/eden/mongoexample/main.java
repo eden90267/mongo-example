@@ -15,7 +15,11 @@ public class main {
         MongoExample mongoExample = new MongoExample();
 
         mongoExample.openExample();
-        mongoExample.insertExample();
+
+//        mongoExample.insertExample();
+
+        mongoExample.findExample();
+
         mongoExample.closeExample();
 
     }
@@ -72,6 +76,18 @@ public class main {
 
             coll.insert(docs);
 
+        }
+
+        public void findExample() {
+            BasicDBObject query = new BasicDBObject("type", "database").append("count", new BasicDBObject("$gt", 1));
+            DBCursor cursor = coll.find(query);
+            try {
+                while (cursor.hasNext()) {
+                    System.out.println(cursor.next());
+                }
+            }finally {
+                cursor.close();
+            }
         }
 
         public void closeExample() {
