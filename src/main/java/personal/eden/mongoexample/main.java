@@ -20,6 +20,10 @@ public class main {
 
         mongoExample.findExample();
 
+//        mongoExample.updateExample();
+
+        mongoExample.removeExample();
+
         mongoExample.closeExample();
 
     }
@@ -30,6 +34,7 @@ public class main {
         private MongoClient mongoClient;
         private DB db;
         private DBCollection coll;
+        private WriteResult result;
 
         public void openExample() {
             credentialOne = MongoCredential.createCredential("test", "test", "password".toCharArray());
@@ -88,6 +93,37 @@ public class main {
             }finally {
                 cursor.close();
             }
+        }
+
+        public void updateExample() {
+
+            BasicDBObject query = new BasicDBObject();
+            query.put("count", 1);
+
+            BasicDBObject query2 = new BasicDBObject();
+            query2.put("count", new BasicDBObject("$gt", 1));
+
+            BasicDBObject update = new BasicDBObject();
+            update.put("$set", new BasicDBObject("info.x", 204));
+
+            coll.update(query, update);
+            coll.update(query2, update);
+            coll.updateMulti(query2, update);
+
+            DBObject obj = coll.findOne(query);
+            obj.put("type", "save_test");
+            coll.save(obj);
+
+        }
+
+        public void removeExample() {
+            result = coll.remove(new BasicDBObject().append("count", 3));
+            System.out.println(result.getN());
+
+            result = coll.remove(new BasicDBObject());
+            System.out.println(result.getN());
+
+            coll.drop();
         }
 
         public void closeExample() {
